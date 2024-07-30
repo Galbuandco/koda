@@ -12,7 +12,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 Future<String> sendData(String message) async {
   final response = await http.post(
-    Uri.parse('http://34.23.235.230:3000/checkeducation'),
+    Uri.parse('http://35.237.12.20:3000/checkeducation'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -49,10 +49,7 @@ Future<List<dynamic>> getMessages(user) async {
       pb.collection("chat2").update(item["id"], body: {"daLeggere": false});
     }
     messages.add(types.TextMessage(
-        id: item["id"],
-        author: types.User(id: item["author"]),
-        createdAt: item["created_chat"],
-        text: item["text"]));
+        id: item["id"], author: types.User(id: item["author"]), createdAt: item["created_chat"], text: item["text"]));
   }
 
   //print(messages);
@@ -70,11 +67,7 @@ class ChatWidget extends StatefulWidget {
   String targetUser;
   String username;
   var immagineprofilo;
-  ChatWidget(
-      {Key? key,
-      required this.targetUser,
-      required this.username,
-      required this.immagineprofilo})
+  ChatWidget({Key? key, required this.targetUser, required this.username, required this.immagineprofilo})
       : super(key: key);
 
   @override
@@ -126,8 +119,7 @@ class _ChatWidgetState extends State<ChatWidget> {
               )),
             ),
             Text(
-              widget.username.toString().toUpperCase().substring(0, 1) +
-                  widget.username.toString().substring(1),
+              widget.username.toString().toUpperCase().substring(0, 1) + widget.username.toString().substring(1),
             ),
           ],
         ),

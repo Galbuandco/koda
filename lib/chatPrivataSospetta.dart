@@ -12,7 +12,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 Future<String> sendData(String message) async {
   final response = await http.post(
-    Uri.parse('http://34.23.235.230:3000/checkSCAM'),
+    Uri.parse('http://35.237.12.20:3000/checkSCAM'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -49,10 +49,7 @@ Future<List<dynamic>> getMessages(user) async {
       pb.collection("chat2").update(item["id"], body: {"daLeggere": false});
     }
     messages.add(types.TextMessage(
-        id: item["id"],
-        author: types.User(id: item["author"]),
-        createdAt: item["created_chat"],
-        text: item["text"]));
+        id: item["id"], author: types.User(id: item["author"]), createdAt: item["created_chat"], text: item["text"]));
   }
 
   //print(messages);
@@ -70,11 +67,7 @@ class ChatWidgetSospetto extends StatefulWidget {
   String targetUser;
   String username;
   var immagineprofilo;
-  ChatWidgetSospetto(
-      {Key? key,
-      required this.targetUser,
-      required this.username,
-      required this.immagineprofilo})
+  ChatWidgetSospetto({Key? key, required this.targetUser, required this.username, required this.immagineprofilo})
       : super(key: key);
 
   @override
@@ -110,11 +103,7 @@ class _ChatWidgetSospettoState extends State<ChatWidgetSospetto> {
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: Text('SCAM Alert'),
-                  content: Text(value
-                          .split(":")
-                          .last
-                          .replaceAll('"', "")
-                          .replaceAll("\\n}", "") +
+                  content: Text(value.split(":").last.replaceAll('"', "").replaceAll("\\n}", "") +
                       " Original message sent: " +
                       item["text"]),
                   actions: [
@@ -160,8 +149,7 @@ class _ChatWidgetSospettoState extends State<ChatWidgetSospetto> {
               )),
             ),
             Text(
-              widget.username.toString().toUpperCase().substring(0, 1) +
-                  widget.username.toString().substring(1),
+              widget.username.toString().toUpperCase().substring(0, 1) + widget.username.toString().substring(1),
             ),
           ],
         ),

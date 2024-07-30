@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:koda/ListachatGruppo.dart';
 import 'package:koda/ListachatPrivate.dart';
+import 'package:koda/amicizie.dart';
 
 class BottomNavigationBarWrapper extends StatefulWidget {
   @override
@@ -12,7 +13,8 @@ class _BottomNavigationBarWrapperState extends State<BottomNavigationBarWrapper>
 
   final List<Widget> _screens = [
     ListaChat(),
-    ListaChatGruppi()
+    ListaChatGruppi(),
+    PaginaAmicizie(),
     // Add your screens here
   ];
 
@@ -27,13 +29,17 @@ class _BottomNavigationBarWrapperState extends State<BottomNavigationBarWrapper>
             _currentIndex = index;
           });
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: 'Chat',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
+            label: 'Groups',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group_add),
             label: 'Groups',
           ),
           // Add your bottom navigation bar items here
