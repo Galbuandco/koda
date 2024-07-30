@@ -13,7 +13,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 Future<String> sendData(dynamic message) async {
   print(message);
   final response = await http.post(
-    Uri.parse('http://34.148.125.17:3000/groupchatsummary'),
+    Uri.parse('http://34.23.235.230:3000/groupchatsummary'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -34,7 +34,8 @@ Future<String> sendData(dynamic message) async {
 }
 
 Future<List<dynamic>> getMessages(String gruppoId) async {
-  var response = await pb.collection("groupChat").getList(sort: "-created_chat", filter: 'gruppo="$gruppoId"');
+  var response = await pb.collection("groupChat").getList(
+      sort: "-created_chat", perPage: 100, filter: 'gruppo="$gruppoId"');
 
   List<types.TextMessage> messages = [];
 
@@ -162,11 +163,14 @@ class _GruppiChatWidgetState extends State<GruppiChatWidget> {
     );
 
     if (message.text == "/summary") {
-      var chatHistory =
-          await pb.collection("groupChat").getFullList(filter: "gruppo = \"${widget.id}\"", sort: "-created_chat");
+      var chatHistory = await pb.collection("groupChat").getFullList(
+          filter: "gruppo = \"${widget.id}\"", sort: "-created_chat");
       //chatHistory = chatHistory.map((e) => e.toJson()).toList();
       sendData(chatHistory
-              .map((e) => {"text": e.getStringValue("text"), "username": e.getStringValue("username")})
+              .map((e) => {
+                    "text": e.getStringValue("text"),
+                    "username": e.getStringValue("username")
+                  })
               .toList())
           .then((result) => {
                 showDialog(
@@ -174,7 +178,11 @@ class _GruppiChatWidgetState extends State<GruppiChatWidget> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       title: const Text('Summary'),
-                      content: Text(result.split(":").last.replaceAll('"', "").replaceAll("\\n}", "")),
+                      content: Text(result
+                          .split(":")
+                          .last
+                          .replaceAll('"', "")
+                          .replaceAll("\\n}", "")),
                       actions: [
                         TextButton(
                           onPressed: () {
@@ -196,7 +204,8 @@ class _GruppiChatWidgetState extends State<GruppiChatWidget> {
         "text": message.text.substring(0, min(500, message.text.length)),
         "created_chat": DateTime.now().millisecondsSinceEpoch,
         "gruppo": widget.id, // Assuming widget.id is the group ID
-        "True": true, // Assuming this is a required field, adjust the key as necessary
+        "True":
+            true, // Assuming this is a required field, adjust the key as necessary
       }).then((value) {
         _addMessage(textMessage);
       });

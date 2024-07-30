@@ -12,7 +12,7 @@ import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 
 Future<String> sendData(String message) async {
   final response = await http.post(
-    Uri.parse('http://34.148.125.17:3000/checkSCAM'),
+    Uri.parse('http://34.23.235.230:3000/checkSCAM'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
@@ -49,7 +49,10 @@ Future<List<dynamic>> getMessages(user) async {
       pb.collection("chat2").update(item["id"], body: {"daLeggere": false});
     }
     messages.add(types.TextMessage(
-        id: item["id"], author: types.User(id: item["author"]), createdAt: item["created_chat"], text: item["text"]));
+        id: item["id"],
+        author: types.User(id: item["author"]),
+        createdAt: item["created_chat"],
+        text: item["text"]));
   }
 
   //print(messages);
@@ -67,7 +70,11 @@ class ChatWidgetSospetto extends StatefulWidget {
   String targetUser;
   String username;
   var immagineprofilo;
-  ChatWidgetSospetto({Key? key, required this.targetUser, required this.username, required this.immagineprofilo})
+  ChatWidgetSospetto(
+      {Key? key,
+      required this.targetUser,
+      required this.username,
+      required this.immagineprofilo})
       : super(key: key);
 
   @override
@@ -88,16 +95,50 @@ class _ChatWidgetSospettoState extends State<ChatWidgetSospetto> {
   @override
   Widget build(BuildContext context) {
     pb.collection('chat2').subscribe('*', (e) {
+      if (e.action == "delete") {
+        return;
+      }
+      print("Sono nel widget giusto");
       var item = e.record!.toJson();
-      setState(() {
-        if (item["target_user"] == pb.authStore.model.id) {
-          _messages.add(types.TextMessage(
-              id: item["id"],
-              author: types.User(id: item["target_user"]),
-              createdAt: item["created_chat"],
-              text: item["text"]));
-        }
-      });
+      if (item["target_user"] == pb.authStore.model.id) {
+        print(item["text"]);
+        sendData(item["text"]).then((value) {
+          if (value.contains("SCAM")) {
+            //print(value);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('SCAM Alert'),
+                  content: Text(value
+                          .split(":")
+                          .last
+                          .replaceAll('"', "")
+                          .replaceAll("\\n}", "") +
+                      " Original message sent: " +
+                      item["text"]),
+                  actions: [
+                    TextButton(
+                      child: Text('OK'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            setState(() {
+              _messages.add(types.TextMessage(
+                  id: item["id"],
+                  author: types.User(id: item["target_user"]),
+                  createdAt: item["created_chat"],
+                  text: item["text"]));
+            });
+          }
+        });
+      }
     });
     return Scaffold(
       appBar: AppBar(
@@ -119,7 +160,8 @@ class _ChatWidgetSospettoState extends State<ChatWidgetSospetto> {
               )),
             ),
             Text(
-              widget.username.toString().toUpperCase().substring(0, 1) + widget.username.toString().substring(1),
+              widget.username.toString().toUpperCase().substring(0, 1) +
+                  widget.username.toString().substring(1),
             ),
           ],
         ),
@@ -154,57 +196,6 @@ class _ChatWidgetSospettoState extends State<ChatWidgetSospetto> {
 
   void _handleSendPressed(types.PartialText message) async {
     bool sendingMessage = true;
-    var res = await sendData(message.text);
-    print(res);
-    if ((!res.contains("ok") && !res.contains("ok")) || res.contains("not")) {
-      sendingMessage = false;
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Warning'),
-            content: Text(
-              res.split(":").last.replaceAll('"', "").replaceAll("\\n}", ""),
-            ),
-            actions: [
-              TextButton(
-                child: Text('Send anyway'),
-                onPressed: () {
-                  /*   final textMessage = types.TextMessage(
-                    author: _user,
-                    createdAt: DateTime.now().millisecondsSinceEpoch,
-                    id: randomString(),
-                    text: message.text,
-                  );
-
-                  pb.collection("chat2").create(body: {
-                    //"id": randomString(),
-                    "author": pb.authStore.model.id,
-                    "text": message.text.substring(0, min(500, message.text.length)),
-                    "created_chat": DateTime.now().millisecondsSinceEpoch,
-                    "target_user": widget.targetUser,
-                    "daLeggere": true,
-                  }).then((value) {
-                    _addMessage(textMessage);
-                  }); */
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => const Isolamento(),
-                    ),
-                  );
-                },
-              ),
-              TextButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
 
     if (sendingMessage) {
       final textMessage = types.TextMessage(
