@@ -12,7 +12,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 String intent_da_notifica = "";
-String apiUrl = "http://192.168.1.146:8090";
+String apiUrl = "http://35.237.12.20:8090";
 final pb = PocketBase(apiUrl);
 const storage = FlutterSecureStorage();
 

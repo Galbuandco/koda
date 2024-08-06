@@ -40,7 +40,7 @@ class _BottomNavigationBarWrapperState extends State<BottomNavigationBarWrapper>
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.group_add),
-            label: 'Groups',
+            label: 'Friends',
           ),
           // Add your bottom navigation bar items here
         ],

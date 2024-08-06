@@ -1,6 +1,6 @@
 import 'package:koda/PocketbaseMethods.dart';
 import 'package:koda/amicizie.dart';
-import 'package:koda/chatPrivata.dart';
+import 'chatMultimediale.dart';
 import 'package:koda/chatPrivataSospetta.dart';
 
 import 'stateHandler.dart';
@@ -118,6 +118,7 @@ class _ListaChatState extends State<ListaChat> {
                     return ListTile(
                         contentPadding: const EdgeInsets.all(8),
                         onTap: () {
+                          print(amici[index]["trusted"]);
                           if (amici[index]["trusted"]) {
                             Navigator.push(
                                 context,
